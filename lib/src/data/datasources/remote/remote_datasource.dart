@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../core/logger/core_log.dart';
 import '../../../domain/entities/failure.dart';
 import '../../models/note_management_model.dart';
 
@@ -31,9 +32,13 @@ abstract class RemoteDataSource {
 class RemoteDataSourceImpl implements RemoteDataSource {
   /// ถ้า true → คืน `Left(ServerFailure 500)` ทุก call
   final bool _shouldFail;
+  final AppLogger _logger;
 
-  const RemoteDataSourceImpl({bool shouldFail = false})
-    : _shouldFail = shouldFail;
+  const RemoteDataSourceImpl({
+    bool shouldFail = false,
+    AppLogger logger = const SilentLog(),
+  }) : _shouldFail = shouldFail,
+       _logger = logger;
 
   static const _fakeDelay = Duration(milliseconds: 800);
 
@@ -68,17 +73,40 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     try {
       await Future<void>.delayed(_fakeDelay);
       if (_shouldFail) {
+        _logger.warning(
+          'shouldFail=true → returning ServerFailure',
+          tag: 'RemoteDataSource',
+        );
         return const Left(
           ServerFailure(statusCode: 500, message: 'Internal server error'),
         );
       }
-      // buildResult อาจ throw ได้ เช่น fromJson map ผิด type
-      return Right(buildResult());
-    } on FormatException {
+      final result = buildResult();
+      _logger.debug('request success', tag: 'RemoteDataSource');
+      return Right(result);
+    } on FormatException catch (e, st) {
+      _logger.error(
+        'Invalid date format',
+        tag: 'RemoteDataSource',
+        error: e,
+        stackTrace: st,
+      );
       return const Left(ParseFailure('Invalid date format in response'));
-    } on TypeError {
+    } on TypeError catch (e, st) {
+      _logger.error(
+        'Response field type mismatch',
+        tag: 'RemoteDataSource',
+        error: e,
+        stackTrace: st,
+      );
       return const Left(ParseFailure('Response field type mismatch'));
-    } catch (_) {
+    } catch (e, st) {
+      _logger.error(
+        'Unexpected error',
+        tag: 'RemoteDataSource',
+        error: e,
+        stackTrace: st,
+      );
       return const Left(NetworkFailure('Unable to reach the server'));
     }
   }

@@ -1,3 +1,4 @@
+import 'package:architecture_management_data/src/core/logger/core_log.dart';
 import 'package:architecture_management_data/src/domain/entities/entities.dart';
 import 'package:architecture_management_data/src/domain/usecases/note_usecases.dart';
 import 'package:architecture_management_data/src/domain/usecases/params/merge_note_params.dart';
@@ -27,17 +28,25 @@ class MergeNoteUsecase {
   const MergeNoteUsecase({
     required CreateNoteUseCase createNoteUseCase,
     required DeleteNoteUseCase deleteNoteUseCase,
+    AppLogger logger = const SilentLog(),
   }) : _createNoteUseCase = createNoteUseCase,
-       _deleteNoteUseCase = deleteNoteUseCase;
+       _deleteNoteUseCase = deleteNoteUseCase,
+       _logger = logger;
 
   final CreateNoteUseCase _createNoteUseCase;
   final DeleteNoteUseCase _deleteNoteUseCase;
+  final AppLogger _logger;
 
   Future<Either<Failure, NoteManagementEntity>> call({
     required MergeNoteParams params,
   }) async {
     final contentA = params.content[0];
     final contentB = params.content[1];
+
+    _logger.debug(
+      'merging note ${contentA.id} + ${contentB.id}',
+      tag: 'MergeNoteUsecase',
+    );
 
     final createResult = await _createNoteUseCase(
       CreateNoteParams(
@@ -46,12 +55,25 @@ class MergeNoteUsecase {
       ),
     );
 
-    return createResult.fold(Left.new, (result) async {
-      await _deleteNoteUseCase(contentA.id);
-      await _deleteNoteUseCase(contentB.id);
-
-      return Right(result);
-    });
+    return createResult.fold(
+      (failure) {
+        _logger.error(
+          'create failed: ${failure.message}',
+          tag: 'MergeNoteUsecase',
+        );
+        return Left(failure);
+      },
+      (result) async {
+        _logger.debug(
+          'create success, deleting originals',
+          tag: 'MergeNoteUsecase',
+        );
+        await _deleteNoteUseCase(contentA.id);
+        await _deleteNoteUseCase(contentB.id);
+        _logger.info('merge complete → ${result.id}', tag: 'MergeNoteUsecase');
+        return Right(result);
+      },
+    );
   }
 
   String _concat(String a, String b) => '$a and $b';

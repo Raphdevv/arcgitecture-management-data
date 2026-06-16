@@ -1,3 +1,4 @@
+import 'package:architecture_management_data/src/core/logger/core_log.dart';
 import 'package:architecture_management_data/src/domain/domain.dart';
 import 'package:get_it/get_it.dart';
 
@@ -22,6 +23,7 @@ void registerUseCaseModule(GetIt sl) {
     () => MergeNoteUsecase(
       createNoteUseCase: sl<CreateNoteUseCase>(),
       deleteNoteUseCase: sl<DeleteNoteUseCase>(),
+      logger: sl<AppLogger>(),
     ),
   );
 }
