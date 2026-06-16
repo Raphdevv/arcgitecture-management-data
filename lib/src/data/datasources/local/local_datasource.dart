@@ -18,7 +18,7 @@ class LocalDataSourceImpl implements LocalDataSource {
 
   const LocalDataSourceImpl(this._prefs);
 
-  static const String _cacheKey = 'Note_management_cache';
+  static const String _cacheKey = 'note_management_cache';
 
   @override
   Future<List<NoteManagementModel>> getCachedAll() async {
