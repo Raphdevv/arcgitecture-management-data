@@ -1,5 +1,9 @@
 import 'package:architecture_management_data/src/domain/entities/entities.dart';
 
+/// Data model สำหรับ serialize/deserialize [NoteManagementEntity]
+///
+/// extends [NoteManagementEntity] เพื่อใช้แทนกันได้ใน Repository
+/// แต่เพิ่ม [fromJson], [toJson], [fromEntity] สำหรับ data mapping
 class NoteManagementModel extends NoteManagementEntity {
   const NoteManagementModel({
     required super.id,

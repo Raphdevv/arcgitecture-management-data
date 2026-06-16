@@ -4,6 +4,22 @@ import 'package:architecture_management_data/src/domain/utils/utils.dart';
 import 'package:dartz/dartz.dart';
 import 'params/note_params.dart';
 
+/// ดึง note ทั้งหมด
+///
+/// **Params:** ไม่มี
+///
+/// **Returns:**
+/// - `Right(List<NoteManagementEntity>)` — list ของ note ทั้งหมด
+/// - `Left(Failure)` — network/server/parse error
+///
+/// **Example:**
+/// ```dart
+/// final result = await getAllNoteUseCase();
+/// result.fold(
+///   (failure) => showError(failure.message),
+///   (notes)   => showList(notes),
+/// );
+/// ```
 class GetAllNoteUseCase {
   final Repository _repository;
 
@@ -14,6 +30,14 @@ class GetAllNoteUseCase {
   }
 }
 
+/// ดึง note ตาม ID
+///
+/// **Params:** [id] — UUID ของ note
+///
+/// **Returns:**
+/// - `Right(NoteManagementEntity)` — note ที่ตรงกับ id
+/// - `Left(NotFoundFailure)` — ไม่พบ note
+/// - `Left(Failure)` — error อื่นๆ
 class GetNoteByIdUseCase {
   final Repository _repository;
 
@@ -24,6 +48,19 @@ class GetNoteByIdUseCase {
   }
 }
 
+/// สร้าง note ใหม่
+///
+/// **Params:** [CreateNoteParams]
+/// - `name` — ชื่อ note
+/// - `description` — รายละเอียด
+///
+/// **Business rules:**
+/// - `id` generate อัตโนมัติด้วย [IdGenerator] (UUID v4)
+/// - `createdAt` ใช้เวลา ณ ขณะที่เรียก usecase
+///
+/// **Returns:**
+/// - `Right(NoteManagementEntity)` — note ที่สร้างสำเร็จ
+/// - `Left(Failure)` — error จาก datasource
 class CreateNoteUseCase {
   final Repository _repository;
   final IdGenerator _idGenerator;
@@ -41,6 +78,17 @@ class CreateNoteUseCase {
   }
 }
 
+/// อัปเดต note ที่มีอยู่
+///
+/// **Params:** [UpdateNoteParams]
+/// - `id` — UUID ของ note ที่ต้องการอัปเดต
+/// - `name` — ชื่อใหม่
+/// - `description` — รายละเอียดใหม่
+///
+/// **Returns:**
+/// - `Right(NoteManagementEntity)` — note หลังอัปเดต
+/// - `Left(NotFoundFailure)` — ไม่พบ note
+/// - `Left(Failure)` — error อื่นๆ
 class UpdateNoteUseCase {
   final Repository _repository;
 
@@ -57,6 +105,13 @@ class UpdateNoteUseCase {
   }
 }
 
+/// ลบ note ตาม ID
+///
+/// **Params:** [id] — UUID ของ note ที่ต้องการลบ
+///
+/// **Returns:**
+/// - `Right(void)` — ลบสำเร็จ
+/// - `Left(Failure)` — error จาก datasource
 class DeleteNoteUseCase {
   final Repository _repository;
 

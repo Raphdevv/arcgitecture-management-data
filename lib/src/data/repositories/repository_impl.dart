@@ -4,6 +4,22 @@ import 'package:architecture_management_data/src/data/models/note_management_mod
 import 'package:architecture_management_data/src/domain/domain.dart';
 import 'package:dartz/dartz.dart';
 
+/// Implementation ของ [Repository]
+///
+/// เชื่อม [RemoteDataSource] และ [LocalDataSource] เข้าด้วยกัน
+///
+/// **โหมด forceLocal (สำหรับ dev):**
+/// ```dart
+/// RepositoryImpl(
+///   remoteDataSource: sl(),
+///   localDataSource: sl(),
+///   forceLocal: true, // ข้าม remote ทุก call
+/// )
+/// ```
+///
+/// **โหมดปกติ:**
+/// - Remote สำเร็จ → cache แล้ว return Right
+/// - Remote ล้มเหลว → fallback ไป Local
 class RepositoryImpl implements Repository {
   final RemoteDataSource _remoteDataSource;
   final LocalDataSource _localDataSource;

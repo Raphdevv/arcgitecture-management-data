@@ -3,6 +3,11 @@ import 'package:dartz/dartz.dart';
 import '../../../domain/entities/failure.dart';
 import '../../models/note_management_model.dart';
 
+/// Contract สำหรับ Remote Data Source (API / Remote Service)
+///
+/// Return type เป็น `Either<Failure, T>`:
+/// - `Left(Failure)` — network, server, parse error
+/// - `Right(T)` — ข้อมูลจาก API สำเร็จ
 abstract class RemoteDataSource {
   Future<Either<Failure, List<NoteManagementModel>>> getAll();
   Future<Either<Failure, NoteManagementModel>> getById(String id);
@@ -15,7 +20,16 @@ abstract class RemoteDataSource {
   Future<Either<Failure, void>> delete(String id);
 }
 
+/// Mock implementation ของ [RemoteDataSource]
+///
+/// จำลอง network latency 800ms เพื่อ dev/test โดยไม่ต้องการ API จริง
+///
+/// **ตั้ง [shouldFail] = true เพื่อจำลอง server error:**
+/// ```dart
+/// RemoteDataSourceImpl(shouldFail: true) // คืน Left(ServerFailure) ทุก call
+/// ```
 class RemoteDataSourceImpl implements RemoteDataSource {
+  /// ถ้า true → คืน `Left(ServerFailure 500)` ทุก call
   final bool _shouldFail;
 
   const RemoteDataSourceImpl({bool shouldFail = false})

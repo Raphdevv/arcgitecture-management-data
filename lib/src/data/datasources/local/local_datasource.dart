@@ -4,6 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/note_management_model.dart';
 
+/// Contract สำหรับ Local Data Source (Offline Cache)
+///
+/// ทำหน้าที่ cache ข้อมูลจาก remote ไว้ใน local storage
+/// Repository จะ fallback มาที่นี่เมื่อ remote ล้มเหลว
 abstract class LocalDataSource {
   Future<List<NoteManagementModel>> getCachedAll();
   Future<NoteManagementModel?> getCachedById(String id);
@@ -13,6 +17,12 @@ abstract class LocalDataSource {
   Future<void> clearAll();
 }
 
+/// Implementation ของ [LocalDataSource] โดยใช้ [SharedPreferences]
+///
+/// เก็บข้อมูลเป็น JSON string ภายใต้ key `note_management_cache`
+///
+/// **หมายเหตุ:** [removeById] และ [cacheOne] ทำ read-modify-write
+/// ห้ามเรียกหลาย call พร้อมกัน (parallel) เพราะจะเกิด race condition
 class LocalDataSourceImpl implements LocalDataSource {
   final SharedPreferences _prefs;
 
