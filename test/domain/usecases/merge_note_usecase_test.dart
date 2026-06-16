@@ -35,18 +35,7 @@ void main() {
     createdAt: DateTime(2026),
   );
 
-  // mocktail ต้องการ registerFallbackValue สำหรับ any()
-  // เมื่อ argument เป็น custom class
-  setUpAll(() {
-    registerFallbackValue(
-      NoteManagementEntity(
-        id: '',
-        name: '',
-        description: '',
-        createdAt: DateTime(2026),
-      ),
-    );
-  });
+  setUpAll(registerFallbackValues);
 
   setUp(() {
     mockRepository = MockRepository();
