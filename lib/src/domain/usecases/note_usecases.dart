@@ -24,8 +24,6 @@ class GetNoteByIdUseCase {
   }
 }
 
-/// Presentation ส่ง [CreateNoteParams] มา
-/// UseCase รับผิดชอบสร้าง id และ createdAt เอง (business rule)
 class CreateNoteUseCase {
   final Repository _repository;
   final IdGenerator _idGenerator;
@@ -43,8 +41,6 @@ class CreateNoteUseCase {
   }
 }
 
-/// Presentation ส่ง [UpdateNoteParams] มา
-/// UseCase แปลงเป็น Entity แล้วส่งไป Repository
 class UpdateNoteUseCase {
   final Repository _repository;
 

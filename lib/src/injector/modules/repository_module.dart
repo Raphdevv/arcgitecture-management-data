@@ -5,11 +5,12 @@ import '../../data/datasources/remote/remote_datasource.dart';
 import '../../data/repositories/repository_impl.dart';
 import '../../domain/repositories/repository.dart';
 
-void registerRepositoryModule(GetIt sl) {
+void registerRepositoryModule(GetIt sl, {bool forceLocal = false}) {
   sl.registerLazySingleton<Repository>(
     () => RepositoryImpl(
       remoteDataSource: sl<RemoteDataSource>(),
       localDataSource: sl<LocalDataSource>(),
+      forceLocal: forceLocal,
     ),
   );
 }
