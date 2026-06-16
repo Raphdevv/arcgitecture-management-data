@@ -1,10 +1,10 @@
-class ArchitectureManagementEntity {
+class NoteManagementEntity {
   final String id;
   final String name;
   final String description;
   final DateTime createdAt;
 
-  const ArchitectureManagementEntity({
+  const NoteManagementEntity({
     required this.id,
     required this.name,
     required this.description,
@@ -14,7 +14,7 @@ class ArchitectureManagementEntity {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ArchitectureManagementEntity &&
+      other is NoteManagementEntity &&
           runtimeType == other.runtimeType &&
           id == other.id;
 

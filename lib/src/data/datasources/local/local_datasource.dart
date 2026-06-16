@@ -2,40 +2,36 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/architecture_management_model.dart';
+import '../../models/note_management_model.dart';
 
-abstract class ArchitectureManagementLocalDataSource {
-  Future<List<ArchitectureManagementModel>> getCachedAll();
-  Future<ArchitectureManagementModel?> getCachedById(String id);
-  Future<void> cacheAll(List<ArchitectureManagementModel> models);
-  Future<void> cacheOne(ArchitectureManagementModel model);
+abstract class LocalDataSource {
+  Future<List<NoteManagementModel>> getCachedAll();
+  Future<NoteManagementModel?> getCachedById(String id);
+  Future<void> cacheAll(List<NoteManagementModel> models);
+  Future<void> cacheOne(NoteManagementModel model);
   Future<void> removeById(String id);
   Future<void> clearAll();
 }
 
-class ArchitectureManagementLocalDataSourceImpl
-    implements ArchitectureManagementLocalDataSource {
+class LocalDataSourceImpl implements LocalDataSource {
   final SharedPreferences _prefs;
 
-  const ArchitectureManagementLocalDataSourceImpl(this._prefs);
+  const LocalDataSourceImpl(this._prefs);
 
-  static const String _cacheKey = 'architecture_management_cache';
+  static const String _cacheKey = 'Note_management_cache';
 
   @override
-  Future<List<ArchitectureManagementModel>> getCachedAll() async {
+  Future<List<NoteManagementModel>> getCachedAll() async {
     final jsonString = _prefs.getString(_cacheKey);
     if (jsonString == null) return [];
     final decoded = json.decode(jsonString) as List<dynamic>;
     return decoded
-        .map(
-          (e) =>
-              ArchitectureManagementModel.fromJson(e as Map<String, dynamic>),
-        )
+        .map((e) => NoteManagementModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
   @override
-  Future<ArchitectureManagementModel?> getCachedById(String id) async {
+  Future<NoteManagementModel?> getCachedById(String id) async {
     final all = await getCachedAll();
     try {
       return all.firstWhere((model) => model.id == id);
@@ -45,7 +41,7 @@ class ArchitectureManagementLocalDataSourceImpl
   }
 
   @override
-  Future<void> cacheAll(List<ArchitectureManagementModel> models) async {
+  Future<void> cacheAll(List<NoteManagementModel> models) async {
     final jsonString = json.encode(
       models.map((model) => model.toJson()).toList(),
     );
@@ -53,7 +49,7 @@ class ArchitectureManagementLocalDataSourceImpl
   }
 
   @override
-  Future<void> cacheOne(ArchitectureManagementModel model) async {
+  Future<void> cacheOne(NoteManagementModel model) async {
     final all = await getCachedAll();
     final index = all.indexWhere((item) => item.id == model.id);
     if (index >= 0) {

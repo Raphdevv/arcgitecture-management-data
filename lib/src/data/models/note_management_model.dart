@@ -1,15 +1,15 @@
-import '../../domain/entities/architecture_management_entity.dart';
+import 'package:architecture_management_data/src/domain/entities/entities.dart';
 
-class ArchitectureManagementModel extends ArchitectureManagementEntity {
-  const ArchitectureManagementModel({
+class NoteManagementModel extends NoteManagementEntity {
+  const NoteManagementModel({
     required super.id,
     required super.name,
     required super.description,
     required super.createdAt,
   });
 
-  factory ArchitectureManagementModel.fromJson(Map<String, dynamic> json) {
-    return ArchitectureManagementModel(
+  factory NoteManagementModel.fromJson(Map<String, dynamic> json) {
+    return NoteManagementModel(
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
@@ -26,10 +26,8 @@ class ArchitectureManagementModel extends ArchitectureManagementEntity {
     };
   }
 
-  factory ArchitectureManagementModel.fromEntity(
-    ArchitectureManagementEntity entity,
-  ) {
-    return ArchitectureManagementModel(
+  factory NoteManagementModel.fromEntity(NoteManagementEntity entity) {
+    return NoteManagementModel(
       id: entity.id,
       name: entity.name,
       description: entity.description,

@@ -1,36 +1,41 @@
 import 'package:get_it/get_it.dart';
 
-import '../../domain/repositories/architecture_management_repository.dart';
-import '../../domain/usecases/architecture_management_usecases.dart';
+import '../../domain/repositories/repository.dart';
+import '../../domain/usecases/note_usecases.dart';
+import '../../domain/utils/id_generator.dart';
 
 void registerUseCaseModule(GetIt sl) {
+  // register IdGenerator
+  sl.registerLazySingleton<IdGenerator>(() => const UuidIdGenerator());
+
   sl.registerLazySingleton(
-    () => GetAllArchitectureManagementUseCase(
-      sl<ArchitectureManagementRepository>(),
+    () => GetAllNoteUseCase(
+      sl<Repository>(),
     ),
   );
 
   sl.registerLazySingleton(
-    () => GetArchitectureManagementByIdUseCase(
-      sl<ArchitectureManagementRepository>(),
+    () => GetNoteByIdUseCase(
+      sl<Repository>(),
     ),
   );
 
   sl.registerLazySingleton(
-    () => CreateArchitectureManagementUseCase(
-      sl<ArchitectureManagementRepository>(),
+    () => CreateNoteUseCase(
+      sl<Repository>(),
+      sl<IdGenerator>(),
     ),
   );
 
   sl.registerLazySingleton(
-    () => UpdateArchitectureManagementUseCase(
-      sl<ArchitectureManagementRepository>(),
+    () => UpdateNoteUseCase(
+      sl<Repository>(),
     ),
   );
 
   sl.registerLazySingleton(
-    () => DeleteArchitectureManagementUseCase(
-      sl<ArchitectureManagementRepository>(),
+    () => DeleteNoteUseCase(
+      sl<Repository>(),
     ),
   );
 }

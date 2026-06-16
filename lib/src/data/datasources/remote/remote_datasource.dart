@@ -1,25 +1,24 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../domain/entities/failure.dart';
-import '../../models/architecture_management_model.dart';
+import '../../models/note_management_model.dart';
 
-abstract class ArchitectureManagementRemoteDataSource {
-  Future<Either<Failure, List<ArchitectureManagementModel>>> getAll();
-  Future<Either<Failure, ArchitectureManagementModel>> getById(String id);
-  Future<Either<Failure, ArchitectureManagementModel>> create(
-    ArchitectureManagementModel model,
+abstract class RemoteDataSource {
+  Future<Either<Failure, List<NoteManagementModel>>> getAll();
+  Future<Either<Failure, NoteManagementModel>> getById(String id);
+  Future<Either<Failure, NoteManagementModel>> create(
+    NoteManagementModel model,
   );
-  Future<Either<Failure, ArchitectureManagementModel>> update(
-    ArchitectureManagementModel model,
+  Future<Either<Failure, NoteManagementModel>> update(
+    NoteManagementModel model,
   );
   Future<Either<Failure, void>> delete(String id);
 }
 
-class ArchitectureManagementRemoteDataSourceImpl
-    implements ArchitectureManagementRemoteDataSource {
+class RemoteDataSourceImpl implements RemoteDataSource {
   final bool _shouldFail;
 
-  const ArchitectureManagementRemoteDataSourceImpl({bool shouldFail = false})
+  const RemoteDataSourceImpl({bool shouldFail = false})
     : _shouldFail = shouldFail;
 
   static const _fakeDelay = Duration(milliseconds: 800);
@@ -28,13 +27,13 @@ class ArchitectureManagementRemoteDataSourceImpl
   static final List<Map<String, dynamic>> _mockData = [
     {
       'id': '1',
-      'name': 'Clean Architecture',
+      'name': 'Clean Note',
       'description': 'แยก layer ชัดเจน domain / data / presentation',
       'created_at': '2026-01-01T00:00:00.000Z',
     },
     {
       'id': '2',
-      'name': 'Hexagonal Architecture',
+      'name': 'Hexagonal Note',
       'description': 'Port & Adapter แยก core ออกจาก external',
       'created_at': '2026-02-01T00:00:00.000Z',
     },
@@ -71,16 +70,14 @@ class ArchitectureManagementRemoteDataSourceImpl
   }
 
   @override
-  Future<Either<Failure, List<ArchitectureManagementModel>>> getAll() {
+  Future<Either<Failure, List<NoteManagementModel>>> getAll() {
     return _simulateRequest(
-      () => _mockData.map(ArchitectureManagementModel.fromJson).toList(),
+      () => _mockData.map(NoteManagementModel.fromJson).toList(),
     );
   }
 
   @override
-  Future<Either<Failure, ArchitectureManagementModel>> getById(
-    String id,
-  ) async {
+  Future<Either<Failure, NoteManagementModel>> getById(String id) async {
     try {
       await Future<void>.delayed(_fakeDelay);
       if (_shouldFail) {
@@ -90,9 +87,9 @@ class ArchitectureManagementRemoteDataSourceImpl
       }
       final json = _mockData.where((e) => e['id'] == id).firstOrNull;
       if (json == null) {
-        return const Left(NotFoundFailure('Architecture management not found'));
+        return const Left(NotFoundFailure('Note management not found'));
       }
-      return Right(ArchitectureManagementModel.fromJson(json));
+      return Right(NoteManagementModel.fromJson(json));
     } on FormatException {
       return const Left(ParseFailure('Invalid date format in response'));
     } on TypeError {
@@ -103,15 +100,15 @@ class ArchitectureManagementRemoteDataSourceImpl
   }
 
   @override
-  Future<Either<Failure, ArchitectureManagementModel>> create(
-    ArchitectureManagementModel model,
+  Future<Either<Failure, NoteManagementModel>> create(
+    NoteManagementModel model,
   ) {
     return _simulateRequest(() => model);
   }
 
   @override
-  Future<Either<Failure, ArchitectureManagementModel>> update(
-    ArchitectureManagementModel model,
+  Future<Either<Failure, NoteManagementModel>> update(
+    NoteManagementModel model,
   ) {
     return _simulateRequest(() => model);
   }
